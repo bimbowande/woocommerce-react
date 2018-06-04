@@ -32,8 +32,10 @@ const Cart = flux.createStore({
     addToCart: function(item) {
         if (this.orderImpossible()) return;
 
-        if (!!this.orders[item.id]) this.orders[item.id].qty++;
-        else this.orders[item.id] = { product: item, qty: 1 };
+        const id = item.__id || item.id;
+
+        if (!!this.orders[id]) this.orders[id].qty++;
+        else this.orders[id] = { product: item, qty: 1 };
 
         // extras?
         if (hasExtras(item)) {
@@ -47,10 +49,11 @@ const Cart = flux.createStore({
     },
 
     updateOrderItem: function(item) {
-        if (!!this.orders[item.id]) {
-            this.orders[item.id].product = item;
+        const id = item.__id || item.id;
+        if (!!this.orders[id]) {
+            this.orders[id].product = item;
             this.persist();
-            this.emit('order.update', {id: ORDER_ITEM_UPDATE, item_id: item.id});
+            this.emit('order.update', {id: ORDER_ITEM_UPDATE, item_id: id});
         }
     },
 
